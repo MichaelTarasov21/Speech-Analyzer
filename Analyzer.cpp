@@ -10,6 +10,8 @@ using namespace std;
 const int MAXFILENAMELENGTH = 50;
 const int MAXPHRASELENGTH = 5;
 
+const int MAXPHRASECOUNT = 5000;
+
 ifstream openInput()
 {
     char filename[MAXFILENAMELENGTH];
@@ -19,9 +21,8 @@ ifstream openInput()
         cout << "Enter the source data file name: ";
         cin >> filename;
         file.open(filename);
-    }
-    while (!file.is_open())
-        ;
+    } while (!file.is_open());
+    ;
     return file;
 }
 
@@ -43,7 +44,133 @@ ofstream openOutput()
     cout << "Enter the phrase frequency file name: ";
     cin >> filename;
     file.open(filename);
+    file << "The file: " << filename << " contains ";
     return file;
+}
+
+void parseSpeech(MyString phrases[], int phrase_length, ifstream &speech, int &phrase_count, int &word_count)
+{
+    MyString word;
+    while (speech >> word)
+    {
+        word.ToUpper();
+        if (word.Length() > 0)
+        {
+            word_count++;
+            for (int i = 0; i < phrase_length; i++)
+            {
+                int phrase_index = phrase_count - i;
+                if (phrase_index >= 0 && phrase_index < MAXPHRASECOUNT)
+                {
+                    phrases[phrase_index] = phrases[phrase_index] + word;
+                }
+            }
+            phrase_count++;
+        }
+    }
+    phrase_count = phrase_count - phrase_length + 1;
+    if (phrase_count > MAXPHRASECOUNT)
+    {
+        cout << "The maximum amount of phrases were found. Excess phrases were cut off.";
+        phrase_count = MAXPHRASECOUNT;
+    }
+}
+
+void swap(MyString array[], int pos1, int pos2)
+{
+    MyString temp = array[pos1];
+    array[pos1] = array[pos2];
+    array[pos2] = temp;
+}
+
+void sortArr(MyString array[], int start, int end)
+{
+    // sortArr is an adapted version of the quicksort algorithm described at https://www.geeksforgeeks.org/cpp-program-for-quicksort/
+    if (end <= start)
+    {
+        return;
+    }
+
+    int pivotindex = start;
+    for (int i = start + 1; i <= end; i++)
+    {
+        if (array[i] <= array[start])
+        {
+            pivotindex++;
+        }
+    }
+    swap(array, start, pivotindex);
+    {
+        int i = start;
+        int j = end;
+
+        while (i < pivotindex)
+        {
+            while (array[i] <= array[pivotindex])
+            {
+                i++;
+            }
+
+            while (array[j] > array[pivotindex])
+            {
+                j--;
+            }
+
+            if (j > pivotindex && i < pivotindex)
+            {
+                MyString higher = array[i];
+                MyString lower = array[j];
+                MyString pivot = array[pivotindex];
+                
+                bool one = array[i] > array[pivotindex] || array[i] < array[pivotindex];
+                bool two = array[j] > array[pivotindex];
+                swap(array, i, j);
+            }
+        }
+    }
+
+    sortArr(array, start, pivotindex - 1);
+    sortArr(array, pivotindex + 1, end);
+}
+
+void countOccurences(MyString phrases[], int phrase_count, int &unique_phrase_count)
+{
+    for (int i = 0; i < phrase_count - 1; i++)
+    {
+        int incrementer = 1;
+        if (phrases[i].Length() > 0)
+        {
+            while (phrases[i] == phrases[i + incrementer])
+            {
+                phrases[i]++;
+                unique_phrase_count--;
+                MyString empty;
+                phrases[i + incrementer] = empty;
+                incrementer++;
+                if (i + incrementer >= phrase_count)
+                {
+                    break;
+                }
+            }
+            i = i + incrementer - 1;
+        }
+    }
+}
+
+void outputResults(ofstream &file, MyString phrases[], int word_count, int phrase_count, int unique_phrase_count)
+{
+
+    file << word_count << " Words.\n";
+    file << "There are " << unique_phrase_count << " unique terms.\n";
+    file << '\n';
+    for (int i = 0; i < phrase_count; i++)
+    {
+        if (phrases[i].Length() > 0)
+        {
+            file << phrases[i];
+            file << '\n';
+        }
+    }
 }
 
 int main()
@@ -51,5 +178,21 @@ int main()
     ifstream speech = openInput();
     int phrase_length = getPhraseLength();
     ofstream results = openOutput();
+
+    MyString phrases[MAXPHRASECOUNT];
+    int phrase_count = 0;
+    int word_count = 0;
+
+    parseSpeech(phrases, phrase_length, speech, phrase_count, word_count);
+    int unique_phrase_count = phrase_count;
+
+    sortArr(phrases, 0, phrase_count - 1);
+
+    countOccurences(phrases, phrase_count, unique_phrase_count);
+
+    sortArr(phrases, 0, phrase_count - 1);
+
+    outputResults(results, phrases, word_count, phrase_count, unique_phrase_count);
+
     return 0;
 }
