@@ -14,10 +14,11 @@ class MyString
 {
 private:
 	char strval[STRING_SIZE];
-	int strln;  // length of string value
+	int strln; // length of string value
 	int frequency;
+
 public:
-	//constructors
+	// constructors
 	MyString() : strln(0), frequency(1)
 	{
 		strcpy(strval, "");
@@ -25,19 +26,19 @@ public:
 
 	MyString(char s[]);
 	// initialize string value to s
-	MyString(const MyString& s)
+	MyString(const MyString &s)
 	{
 		strcpy(strval, s.strval);
 		strln = s.strln;
 		frequency = s.frequency;
 	}
 
-	//accessor functions/operators
+	// accessor functions/operators
 	int Length() const
 	{
 		return strln;
 	}
-	
+
 	bool isAcceptable(char c) // only accept alphanumeric characters
 	{
 		return (((c >= 48) && (c <= 57)) || ((c >= 65) && (c <= 90)) || ((c >= 97) && (c <= 122)));
@@ -62,27 +63,28 @@ public:
 		strval[n] = '\0';
 	}
 
-	bool operator ==(MyString s) const;
-	bool operator >(MyString s) const;
-	bool operator <(MyString s) const;
-	MyString operator +(MyString s) const;
-	MyString operator =(MyString s);
-	MyString operator ++(int)
+	bool operator==(MyString s) const;
+	bool operator>(MyString s) const;
+	bool operator>=(MyString s) const;
+	bool operator<(MyString s) const;
+	bool operator<=(MyString s) const;
+	MyString operator+(MyString s) const;
+	MyString operator=(MyString s);
+	MyString operator++(int)
 	{
 		frequency += 1;
 		return *this;
 	}
 
-	char& operator [](int indx)
+	char &operator[](int indx)
 	{
 		return strval[indx];
 	}
 
-	//file input/output functions
-	friend ifstream& operator >>(ifstream& i, MyString& str);
-	friend ofstream& operator <<(ofstream& o, MyString& str);
+	// file input/output functions
+	friend ifstream &operator>>(ifstream &i, MyString &str);
+	friend ofstream &operator<<(ofstream &o, MyString &str);
 };
-
 
 MyString::MyString(char c[])
 {
@@ -91,28 +93,60 @@ MyString::MyString(char c[])
 	frequency = 1;
 }
 
-bool MyString::operator ==(MyString s) const
+bool MyString::operator==(MyString s) const
 {
 	return (strcmp(strval, s.strval) == 0);
 }
 
-bool MyString::operator < (MyString s) const
+bool MyString::operator>(MyString s) const
 {
 	if (frequency == s.frequency)
-		return (strcmp(strval, s.strval) == 1);
+	{
+		return (strcmp(strval, s.strval) > 0);
+	}
 	else
+	{
 		return (frequency < s.frequency);
+	}
 }
 
-bool MyString::operator > (MyString s) const
+bool MyString::operator>=(MyString s) const
 {
 	if (frequency == s.frequency)
-		return (strcmp(strval, s.strval) == -1);
+	{
+		return (strcmp(strval, s.strval) >= 0);
+	}
 	else
-		return (frequency > s.frequency);
+	{
+		return (frequency < s.frequency);
+	}
 }
 
-MyString MyString::operator + (MyString s) const
+bool MyString::operator<(MyString s) const
+{
+	if (frequency == s.frequency)
+	{
+		return (strcmp(strval, s.strval) < 0);
+	}
+	else
+	{
+		return (frequency > s.frequency);
+	}
+}
+
+bool MyString::operator<=(MyString s) const
+{
+	if (frequency == s.frequency)
+	{
+		return (strcmp(strval, s.strval) <= 0);
+	}
+	else
+	{
+		return (frequency > s.frequency);
+	}
+}
+
+MyString MyString::operator+(MyString s) const
 {
 	char str[STRING_SIZE];
 
@@ -123,7 +157,7 @@ MyString MyString::operator + (MyString s) const
 	return MyString(str);
 }
 
-MyString MyString::operator = (MyString s)
+MyString MyString::operator=(MyString s)
 {
 	strcpy(strval, s.strval);
 	strln = s.strln;
@@ -131,14 +165,14 @@ MyString MyString::operator = (MyString s)
 	return *this;
 }
 
-ifstream& operator >>(ifstream& i, MyString& str)
+ifstream &operator>>(ifstream &i, MyString &str)
 {
 	i >> str.strval;
 	str.strln = strlen(str.strval);
 	return i;
 }
 
-ofstream& operator <<(ofstream& o, MyString& str)
+ofstream &operator<<(ofstream &o, MyString &str)
 {
 	for (int i = 0; i < str.strln; i++)
 		o << str.strval[i];
