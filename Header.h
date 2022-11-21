@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <cstring>
 
 using namespace std;
 
@@ -19,14 +20,14 @@ public:
 	//constructors
 	MyString() : strln(0), frequency(1)
 	{
-		strcpy_s(strval, "");
+		strcpy(strval, "");
 	}
 
 	MyString(char s[]);
 	// initialize string value to s
 	MyString(const MyString& s)
 	{
-		strcpy_s(strval, s.strval);
+		strcpy(strval, s.strval);
 		strln = s.strln;
 		frequency = s.frequency;
 	}
@@ -85,7 +86,7 @@ public:
 
 MyString::MyString(char c[])
 {
-	strcpy_s(strval, c);
+	strcpy(strval, c);
 	strln = strlen(c);
 	frequency = 1;
 }
@@ -115,16 +116,16 @@ MyString MyString::operator + (MyString s) const
 {
 	char str[STRING_SIZE];
 
-	strcpy_s(str, this->strval);
-	strcat_s(str, " ");
-	strcat_s(str, s.strval);
+	strcpy(str, this->strval);
+	strcat(str, " ");
+	strcat(str, s.strval);
 
 	return MyString(str);
 }
 
 MyString MyString::operator = (MyString s)
 {
-	strcpy_s(strval, s.strval);
+	strcpy(strval, s.strval);
 	strln = s.strln;
 	frequency = s.frequency;
 	return *this;
