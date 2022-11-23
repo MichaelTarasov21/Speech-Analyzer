@@ -68,6 +68,7 @@ void parseSpeech(MyString phrases[], int phrase_length, ifstream &speech, int &p
             phrase_count++;
         }
     }
+    speech.close();
     phrase_count = phrase_count - phrase_length + 1;
     if (phrase_count > MAXPHRASECOUNT)
     {
@@ -118,12 +119,6 @@ void sortArr(MyString array[], int start, int end)
 
             if (j > pivotindex && i < pivotindex)
             {
-                MyString higher = array[i];
-                MyString lower = array[j];
-                MyString pivot = array[pivotindex];
-                
-                bool one = array[i] > array[pivotindex] || array[i] < array[pivotindex];
-                bool two = array[j] > array[pivotindex];
                 swap(array, i, j);
             }
         }
@@ -171,6 +166,7 @@ void outputResults(ofstream &file, MyString phrases[], int word_count, int phras
             file << '\n';
         }
     }
+    file.close();
 }
 
 int main()
