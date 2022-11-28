@@ -10,8 +10,6 @@ using namespace std;
 const int MAXFILENAMELENGTH = 50;
 const int MAXPHRASELENGTH = 5;
 
-const int MAXPHRASECOUNT = 5000;
-
 ifstream openInput()
 {
     char filename[MAXFILENAMELENGTH];
@@ -48,19 +46,30 @@ ofstream openOutput()
     return file;
 }
 
-void parseSpeech(MyString phrases[], int phrase_length, ifstream &speech, int &phrase_count, int &word_count)
+MyString* parseSpeech(int phrase_length, ifstream &speech, int &phrase_count, int &word_count)
 {
     MyString word;
+    int maxphrasecount = 100;
+    MyString* phrases = new MyString[maxphrasecount];
     while (speech >> word)
     {
         word.ToUpper();
         if (word.Length() > 0)
         {
             word_count++;
+            if (word_count == maxphrasecount) {
+                MyString* expansion = new MyString[maxphrasecount + 100];
+                for (int i = 0; i < maxphrasecount; i++) {
+                    expansion[i] = phrases[i];
+                }
+                delete[] phrases;
+                phrases = expansion;
+                maxphrasecount += 100;
+            }
             for (int i = 0; i < phrase_length; i++)
             {
                 int phrase_index = phrase_count - i;
-                if (phrase_index >= 0 && phrase_index < MAXPHRASECOUNT)
+                if (phrase_index >= 0)
                 {
                     phrases[phrase_index] = phrases[phrase_index] + word;
                 }
@@ -70,11 +79,7 @@ void parseSpeech(MyString phrases[], int phrase_length, ifstream &speech, int &p
     }
     speech.close();
     phrase_count = phrase_count - phrase_length + 1;
-    if (phrase_count > MAXPHRASECOUNT)
-    {
-        cout << "The maximum amount of phrases were found. Excess phrases were cut off.";
-        phrase_count = MAXPHRASECOUNT;
-    }
+    return phrases;
 }
 
 void swap(MyString array[], int pos1, int pos2)
@@ -175,11 +180,10 @@ int main()
     int phrase_length = getPhraseLength();
     ofstream results = openOutput();
 
-    MyString phrases[MAXPHRASECOUNT];
     int phrase_count = 0;
     int word_count = 0;
 
-    parseSpeech(phrases, phrase_length, speech, phrase_count, word_count);
+    MyString* phrases = parseSpeech(phrase_length, speech, phrase_count, word_count);
     int unique_phrase_count = phrase_count;
 
     sortArr(phrases, 0, phrase_count - 1);
