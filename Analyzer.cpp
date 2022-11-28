@@ -9,6 +9,7 @@ using namespace std;
 
 const int MAXFILENAMELENGTH = 50;
 const int MAXPHRASELENGTH = 5;
+const int DEFAULTPHRASECOUNT = 100;
 
 ifstream openInput()
 {
@@ -49,7 +50,7 @@ ofstream openOutput()
 MyString* parseSpeech(int phrase_length, ifstream &speech, int &phrase_count, int &word_count)
 {
     MyString word;
-    int maxphrasecount = 100;
+    int maxphrasecount = DEFAULTPHRASECOUNT;
     MyString* phrases = new MyString[maxphrasecount];
     while (speech >> word)
     {
@@ -58,13 +59,13 @@ MyString* parseSpeech(int phrase_length, ifstream &speech, int &phrase_count, in
         {
             word_count++;
             if (word_count == maxphrasecount) {
-                MyString* expansion = new MyString[maxphrasecount + 100];
+                MyString* expansion = new MyString[maxphrasecount + DEFAULTPHRASECOUNT];
                 for (int i = 0; i < maxphrasecount; i++) {
                     expansion[i] = phrases[i];
                 }
                 delete[] phrases;
                 phrases = expansion;
-                maxphrasecount += 100;
+                maxphrasecount += DEFAULTPHRASECOUNT;
             }
             for (int i = 0; i < phrase_length; i++)
             {
