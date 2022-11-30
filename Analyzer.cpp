@@ -72,7 +72,7 @@ MyString* parseSpeech(int phrase_length, ifstream &speech, int &phrase_count, in
                 int phrase_index = phrase_count - i;
                 if (phrase_index >= 0)
                 {
-                    phrases[phrase_index] = phrases[phrase_index] + word;
+                    phrases[phrase_index] += word;
                 }
             }
             phrase_count++;

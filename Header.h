@@ -70,6 +70,7 @@ public:
 	bool operator<=(MyString s) const;
 	MyString operator+(MyString s) const;
 	MyString operator=(MyString s);
+	MyString operator+=(MyString s);
 	MyString operator++(int)
 	{
 		frequency += 1;
@@ -88,8 +89,12 @@ public:
 
 MyString::MyString(char c[])
 {
-	strcpy(strval, c);
 	strln = strlen(c);
+	if (strln < STRING_SIZE) {
+		strcpy(strval, c);
+	} else {
+		cout << strval << ' ' << c << " exceeds the limit on word length set in Header.h please adjust this limit.";
+	}
 	frequency = 1;
 }
 
@@ -148,7 +153,8 @@ bool MyString::operator<=(MyString s) const
 
 MyString MyString::operator+(MyString s) const
 {
-	char str[STRING_SIZE];
+	int size = s.strln + this->strln + 1;
+	char str[size];
 
 	strcpy(str, this->strval);
 	strcat(str, " ");
@@ -162,6 +168,19 @@ MyString MyString::operator=(MyString s)
 	strcpy(strval, s.strval);
 	strln = s.strln;
 	frequency = s.frequency;
+	return *this;
+}
+
+MyString MyString::operator+=(MyString s)
+{
+	int size = s.strln + this->strln + 1;
+	if (size >= STRING_SIZE) {
+		cout << strval << " + " << s.strval " exceeds the limit on word length set in Header.h please adjust this limit.";;
+		return *this;
+	}
+	strcat(strval, " ");
+	strcat(strval, s.strval);
+	strln = size;
 	return *this;
 }
 
