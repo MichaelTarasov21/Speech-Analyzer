@@ -175,7 +175,7 @@ MyString MyString::operator+=(MyString s)
 {
 	int size = s.strln + this->strln + 1;
 	if (size >= STRING_SIZE) {
-		cout << strval << " + " << s.strval " exceeds the limit on word length set in Header.h please adjust this limit.";;
+		cout << strval << " + " << s.strval << " exceeds the limit on word length set in Header.h please adjust this limit.";
 		return *this;
 	}
 	strcat(strval, " ");
