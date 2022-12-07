@@ -30,7 +30,7 @@ int getPhraseLength()
     int input;
     do
     {
-        cout << "How many adjacent words are in a phrase, enter 1-5: ";
+        cout << "How many adjacent words are in a phrase, enter 1-" << MAXPHRASELENGTH << ": ";
         cin >> input;
     } while (input < 1 || input > MAXPHRASELENGTH);
     return input;
