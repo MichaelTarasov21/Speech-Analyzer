@@ -192,8 +192,10 @@ int main()
     countOccurences(phrases, phrase_count, unique_phrase_count);
 
     sortArr(phrases, 0, phrase_count - 1);
-
-    outputResults(results, phrases, word_count, phrase_count, unique_phrase_count);
-
+    if (unique_phrase_count > 0) {
+        outputResults(results, phrases, word_count, phrase_count, unique_phrase_count);
+    } else {
+        cout << "There are not enough words in the input file to form a phrase" << endl;
+    }
     return 0;
 }
